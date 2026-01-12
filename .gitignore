@@ -1,0 +1,115 @@
+# Built application files
+*.apk
+*.ap_
+*.aab
+*.aar
+
+# Files for the ART/JVM
+*.dex
+*.hprof
+*.class
+
+# Files for the NDK
+*.so
+
+# Gradle files
+.gradle/
+build/
+capt/
+.externalNativeBuild/
+.cxx/
+local.properties
+.DS_Store
+*.iml
+.idea/
+.vscode/
+.settings/
+.project
+.classpath
+*.log
+*.lock
+*.jar
+*.war
+*.zip
+*.rar
+*.7z
+*.orig
+*.bak
+*.swp
+*~
+.fuse_hidden*
+.directory
+.localized
+.fseventsd
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Tt]humbs.db
+*.stackdump
+
+# Android Studio and IntelliJ IDEA
+.idea/
+.idea_modules/
+.idea/workspace.xml
+.idea/libraries/
+.idea/caches/
+.idea/gradle.xml
+.idea/modules.xml
+.idea/codeStyles/
+.idea/dictionaries/
+.idea/copyright/
+.idea/encodings.xml
+.idea/misc.xml
+.idea/vcs.xml
+.idea/compiler.xml
+.idea/jarRepositories.xml
+.idea/navEditor.xml
+.idea/render.xml
+.idea/deploymentTargetDropDown.xml
+.idea/kotlinc.xml
+.idea/assetWizardSettings.xml
+.idea/sdk_settings.xml
+.idea/tasks.xml
+.idea/runConfigurations/
+
+# Keystore files
+*.jks
+*.keystore
+
+# External native build files
+.externalNativeBuild/
+
+# Google Services (e.g. Firebase)
+google-services.json
+
+# Crashlytics
+crashlytics-build.properties
+
+# Room auto-generated schema JSON files
+*.json
+
+# Local test results
+**/test-results/
+**/test-output/
+
+# Gradle generated files
+gradle-wrapper.jar
+gradlew
+gradlew.bat
+
+# Kotlin
+.kotlin/
+
+# Android Profiling
+*.trace
+
+# Android Lint
+lint-results.html
+lint-results.xml
+
+# Android NDK
+.cxx/
+
+# Android build output
+app/build/
