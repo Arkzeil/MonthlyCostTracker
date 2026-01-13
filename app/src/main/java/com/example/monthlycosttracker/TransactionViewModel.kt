@@ -17,6 +17,14 @@ class TransactionViewModel(private val transactionDao: TransactionDao) : ViewMod
     fun delete(transaction: Transaction) = viewModelScope.launch {
         transactionDao.deleteTransaction(transaction)
     }
+
+    fun update(transaction: Transaction) = viewModelScope.launch {
+        transactionDao.updateTransaction(transaction)
+    }
+
+    fun getTransactionById(id: Int): Flow<Transaction> {
+        return transactionDao.getTransactionById(id)
+    }
 }
 
 class TransactionViewModelFactory(private val transactionDao: TransactionDao) : ViewModelProvider.Factory {

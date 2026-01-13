@@ -28,16 +28,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.text.DecimalFormat
 
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.IconButton
+
+import androidx.compose.material.icons.filled.Edit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     viewModel: TransactionViewModel,
-    onAddTransactionClick: () -> Unit
+    onAddTransactionClick: () -> Unit,
+    onEditTransactionClick: (Int) -> Unit
 ) {
     val transactions by viewModel.allTransactions.collectAsState(initial = emptyList())
 
@@ -61,14 +63,17 @@ fun MainScreen(
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
             TotalCostHeader(totalCost = totalCost)
-            TransactionList(transactions = transactions, viewModel = viewModel)
+            TransactionList(
+                transactions = transactions,
+                viewModel = viewModel,
+                onEditTransactionClick = onEditTransactionClick
+            )
         }
     }
 }
 
 @Composable
 fun TotalCostHeader(totalCost: Double) {
-    val decimalFormat = DecimalFormat("#,##0.00")
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -83,7 +88,7 @@ fun TotalCostHeader(totalCost: Double) {
         ) {
             Text("Total Monthly Cost", style = MaterialTheme.typography.headlineMedium)
             Text(
-                "$${decimalFormat.format(totalCost)}",
+                "$${DecimalFormatter.formatter.format(totalCost)}",
                 fontSize = 36.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -93,20 +98,31 @@ fun TotalCostHeader(totalCost: Double) {
 }
 
 @Composable
-fun TransactionList(transactions: List<Transaction>, viewModel: TransactionViewModel) {
+fun TransactionList(
+    transactions: List<Transaction>,
+    viewModel: TransactionViewModel,
+    onEditTransactionClick: (Int) -> Unit
+) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(transactions) { transaction ->
-            TransactionItem(transaction = transaction, viewModel = viewModel)
+            TransactionItem(
+                transaction = transaction,
+                viewModel = viewModel,
+                onEditTransactionClick = onEditTransactionClick
+            )
         }
     }
 }
 
 @Composable
-fun TransactionItem(transaction: Transaction, viewModel: TransactionViewModel) {
-    val decimalFormat = DecimalFormat("#,##0.00")
+fun TransactionItem(
+    transaction: Transaction,
+    viewModel: TransactionViewModel,
+    onEditTransactionClick: (Int) -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -119,9 +135,14 @@ fun TransactionItem(transaction: Transaction, viewModel: TransactionViewModel) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(transaction.description, style = MaterialTheme.typography.bodyLarge)
-            Text("$${decimalFormat.format(transaction.amount)}", fontWeight = FontWeight.SemiBold)
-            IconButton(onClick = { viewModel.delete(transaction) }) {
-                Icon(Icons.Filled.Delete, "Delete transaction")
+            Text("$${DecimalFormatter.formatter.format(transaction.amount)}", fontWeight = FontWeight.SemiBold)
+            Row {
+                IconButton(onClick = { onEditTransactionClick(transaction.id) }) {
+                    Icon(Icons.Filled.Edit, "Edit transaction")
+                }
+                IconButton(onClick = { viewModel.delete(transaction) }) {
+                    Icon(Icons.Filled.Delete, "Delete transaction")
+                }
             }
         }
     }

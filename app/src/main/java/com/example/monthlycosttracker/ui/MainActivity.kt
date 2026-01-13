@@ -58,7 +58,10 @@ fun AppNavigation(viewModel: TransactionViewModel) {
         composable("main_screen") {
             MainScreen(
                 viewModel = viewModel,
-                onAddTransactionClick = { navController.navigate("add_transaction_screen") }
+                onAddTransactionClick = { navController.navigate("add_transaction_screen") },
+                onEditTransactionClick = { transactionId ->
+                    navController.navigate("edit_transaction_screen/$transactionId")
+                }
             )
         }
         composable("add_transaction_screen") {
@@ -69,6 +72,16 @@ fun AppNavigation(viewModel: TransactionViewModel) {
                     navController.popBackStack()
                 }
             )
+        }
+        composable("edit_transaction_screen/{transactionId}") { backStackEntry ->
+            val transactionId = backStackEntry.arguments?.getString("transactionId")?.toIntOrNull()
+            if (transactionId != null) {
+                EditTransactionScreen(
+                    viewModel = viewModel,
+                    transactionId = transactionId,
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
         }
     }
 }
