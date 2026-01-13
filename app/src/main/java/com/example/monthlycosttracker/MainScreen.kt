@@ -30,6 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.text.DecimalFormat
 
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.IconButton
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
@@ -58,7 +61,7 @@ fun MainScreen(
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
             TotalCostHeader(totalCost = totalCost)
-            TransactionList(transactions = transactions)
+            TransactionList(transactions = transactions, viewModel = viewModel)
         }
     }
 }
@@ -90,19 +93,19 @@ fun TotalCostHeader(totalCost: Double) {
 }
 
 @Composable
-fun TransactionList(transactions: List<Transaction>) {
+fun TransactionList(transactions: List<Transaction>, viewModel: TransactionViewModel) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(transactions) { transaction ->
-            TransactionItem(transaction)
+            TransactionItem(transaction = transaction, viewModel = viewModel)
         }
     }
 }
 
 @Composable
-fun TransactionItem(transaction: Transaction) {
+fun TransactionItem(transaction: Transaction, viewModel: TransactionViewModel) {
     val decimalFormat = DecimalFormat("#,##0.00")
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -117,6 +120,9 @@ fun TransactionItem(transaction: Transaction) {
         ) {
             Text(transaction.description, style = MaterialTheme.typography.bodyLarge)
             Text("$${decimalFormat.format(transaction.amount)}", fontWeight = FontWeight.SemiBold)
+            IconButton(onClick = { viewModel.delete(transaction) }) {
+                Icon(Icons.Filled.Delete, "Delete transaction")
+            }
         }
     }
 }

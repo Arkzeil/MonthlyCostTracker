@@ -13,6 +13,10 @@ class TransactionViewModel(private val transactionDao: TransactionDao) : ViewMod
     fun insert(transaction: Transaction) = viewModelScope.launch {
         transactionDao.insertTransaction(transaction)
     }
+
+    fun delete(transaction: Transaction) = viewModelScope.launch {
+        transactionDao.deleteTransaction(transaction)
+    }
 }
 
 class TransactionViewModelFactory(private val transactionDao: TransactionDao) : ViewModelProvider.Factory {
