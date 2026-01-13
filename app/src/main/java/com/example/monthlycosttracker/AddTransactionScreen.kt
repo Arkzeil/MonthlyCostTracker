@@ -88,7 +88,7 @@ fun AddTransactionScreen(
                     )
                     onSaveTransaction(newTransaction)
                 },
-                enabled = description.isNotBlank() && amount.toDoubleOrNull() != null,
+                enabled = description.isNotBlank() && amount.toDoubleOrNull() != null && amount.toDouble() != 0.0,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Save Transaction")

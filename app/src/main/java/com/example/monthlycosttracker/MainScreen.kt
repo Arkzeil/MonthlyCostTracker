@@ -103,19 +103,35 @@ fun TransactionList(
     viewModel: TransactionViewModel,
     onEditTransactionClick: (Int) -> Unit
 ) {
-    LazyColumn(
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(transactions) { transaction ->
-            TransactionItem(
-                transaction = transaction,
-                viewModel = viewModel,
-                onEditTransactionClick = onEditTransactionClick
-            )
+    if (transactions.isEmpty()) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text("No transactions yet. Add one to get started!")
+        }
+    } else {
+        LazyColumn(
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(transactions) { transaction ->
+                TransactionItem(
+                    transaction = transaction,
+                    viewModel = viewModel,
+                    onEditTransactionClick = onEditTransactionClick
+                )
+            }
         }
     }
 }
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 
 @Composable
 fun TransactionItem(
@@ -123,6 +139,31 @@ fun TransactionItem(
     viewModel: TransactionViewModel,
     onEditTransactionClick: (Int) -> Unit
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Delete Transaction") },
+            text = { Text("Are you sure you want to delete this transaction?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.delete(transaction)
+                        showDialog = false
+                    }
+                ) {
+                    Text("Confirm")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -140,7 +181,7 @@ fun TransactionItem(
                 IconButton(onClick = { onEditTransactionClick(transaction.id) }) {
                     Icon(Icons.Filled.Edit, "Edit transaction")
                 }
-                IconButton(onClick = { viewModel.delete(transaction) }) {
+                IconButton(onClick = { showDialog = true }) {
                     Icon(Icons.Filled.Delete, "Delete transaction")
                 }
             }
