@@ -15,9 +15,10 @@ import androidx.room.Room
 import com.example.monthlycosttracker.AddTransactionScreen
 import com.example.monthlycosttracker.AppDatabase
 import com.example.monthlycosttracker.MainScreen
-import com.example.monthlycosttracker.TransactionDao
-import com.example.monthlycosttracker.ui.theme.MonthlyCostTrackerTheme
-import kotlinx.coroutines.runBlocking
+import androidx.activity.viewModels
+import com.example.monthlycosttracker.TransactionViewModel
+import com.example.monthlycosttracker.TransactionViewModelFactory
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 class MainActivity : ComponentActivity() {
     private lateinit var transactionDao: TransactionDao
@@ -32,13 +33,17 @@ class MainActivity : ComponentActivity() {
         ).build()
         transactionDao = database.transactionDao()
 
+        val viewModel: TransactionViewModel by viewModels {
+            TransactionViewModelFactory(transactionDao)
+        }
+
         setContent {
             MonthlyCostTrackerTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavigation(transactionDao = transactionDao)
+                    AppNavigation(viewModel = viewModel)
                 }
             }
         }
@@ -46,13 +51,13 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun AppNavigation(transactionDao: TransactionDao) {
+fun AppNavigation(viewModel: TransactionViewModel) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "main_screen") {
         composable("main_screen") {
             MainScreen(
-                transactionDao = transactionDao,
+                viewModel = viewModel,
                 onAddTransactionClick = { navController.navigate("add_transaction_screen") }
             )
         }
@@ -60,9 +65,7 @@ fun AppNavigation(transactionDao: TransactionDao) {
             AddTransactionScreen(
                 onBackClick = { navController.popBackStack() },
                 onSaveTransaction = { transaction ->
-                    runBlocking {
-                        transactionDao.insertTransaction(transaction)
-                    }
+                    viewModel.insert(transaction)
                     navController.popBackStack()
                 }
             )

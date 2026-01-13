@@ -33,10 +33,10 @@ import java.text.DecimalFormat
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    transactionDao: TransactionDao,
+    viewModel: TransactionViewModel,
     onAddTransactionClick: () -> Unit
 ) {
-    val transactions by transactionDao.getAllTransactions().collectAsState(initial = emptyList())
+    val transactions by viewModel.allTransactions.collectAsState(initial = emptyList())
 
     val totalCost = transactions.sumOf { it.amount }
 

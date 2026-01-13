@@ -28,17 +28,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTransactionScreen(
     onBackClick: () -> Unit,
-    onSaveTransaction: suspend (Transaction) -> Unit
+    onSaveTransaction: (Transaction) -> Unit
 ) {
     var description by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
-    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -89,9 +86,7 @@ fun AddTransactionScreen(
                         description = description,
                         amount = amount.toDoubleOrNull() ?: 0.0
                     )
-                    scope.launch {
-                        onSaveTransaction(newTransaction)
-                    }
+                    onSaveTransaction(newTransaction)
                 },
                 enabled = description.isNotBlank() && amount.toDoubleOrNull() != null,
                 modifier = Modifier.fillMaxWidth()

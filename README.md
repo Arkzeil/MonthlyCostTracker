@@ -14,6 +14,7 @@ The Monthly Cost Tracker is an Android application designed to help users track 
 *   **Kotlin:** Primary programming language for Android development.
 *   **Jetpack Compose:** Modern toolkit for building native Android UI.
 *   **Room Persistence Library:** Provides an abstraction layer over SQLite to allow for more robust database access while harnessing the full power of SQLite.
+*   **ViewModel:** Manages UI-related data in a lifecycle-conscious way.
 *   **Android Navigation Compose:** For managing in-app navigation.
 *   **Gradle Kotlin DSL:** For build automation and dependency management.
 
