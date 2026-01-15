@@ -16,9 +16,11 @@ import com.example.monthlycosttracker.AddTransactionScreen
 import com.example.monthlycosttracker.AppDatabase
 import com.example.monthlycosttracker.MainScreen
 import androidx.activity.viewModels
+import com.example.monthlycosttracker.EditTransactionScreen
+import com.example.monthlycosttracker.TransactionDao
 import com.example.monthlycosttracker.TransactionViewModel
 import com.example.monthlycosttracker.TransactionViewModelFactory
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.monthlycosttracker.ui.theme.MonthlyCostTrackerTheme
 
 class MainActivity : ComponentActivity() {
     private lateinit var transactionDao: TransactionDao
