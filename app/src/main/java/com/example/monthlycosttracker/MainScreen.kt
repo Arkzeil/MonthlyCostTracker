@@ -172,7 +172,10 @@ fun TransactionItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(transaction.description, style = MaterialTheme.typography.bodyLarge)
+            Column {
+                Text(transaction.description, style = MaterialTheme.typography.bodyLarge)
+                Text(transaction.date, style = MaterialTheme.typography.bodySmall)
+            }
             Text("$${DecimalFormatter.formatter.format(transaction.amount)}", fontWeight = FontWeight.SemiBold)
             Row {
                 IconButton(onClick = { onEditTransactionClick(transaction.id) }) {

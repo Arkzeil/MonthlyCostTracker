@@ -4,6 +4,7 @@
 The Monthly Cost Tracker is an Android application designed to help users track their monthly expenses. Users can add new transactions, view a list of all recorded transactions, and see a running total of their monthly costs. The application utilizes persistent storage to ensure that all transaction data is saved and available even after the app is closed.
 
 ## Features
+*   **Transaction Date Input:** Record the specific date for each transaction (Year/Month/Day).
 *   **Add Transactions:** Easily add new expenses with a description and amount.
 *   **View Transactions:** See a list of all recorded transactions.
 *   **Total Monthly Cost:** Displays the sum of all recorded transactions for a clear overview of spending.
@@ -23,6 +24,7 @@ The Monthly Cost Tracker is an Android application designed to help users track 
 To get a local copy up and running, follow these simple steps.
 
 ### Prerequisites
+*   Java Development Kit (JDK) 17 or higher
 *   Android Studio (Bumblebee 2021.1.1 or newer recommended)
 *   Android SDK (API Level 34 or higher recommended)
 *   An Android Emulator or a physical Android device
@@ -80,7 +82,7 @@ To get a local copy up and running, follow these simple steps.
 ## Usage
 1.  **Main Screen:** Upon launching the app, you will see the main screen displaying the "Total Monthly Cost" and a list of your transactions.
 2.  **Add New Transaction:** Click the floating action button (plus icon) to navigate to the "Add New Transaction" screen.
-3.  **Enter Details:** Input the transaction description and amount.
+3.  **Enter Details:** Input the transaction description, amount, and date (in YYYY-MM-DD format).
 4.  **Save Transaction:** Click "Save Transaction" to add it to your list. The app will automatically navigate back to the main screen, and your total cost will be updated.
 5.  **Data Persistence:** All transactions are saved automatically and will be available the next time you open the app.
 

@@ -36,6 +36,11 @@ fun AddTransactionScreen(
 ) {
     var description by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
+    val calendar = java.util.Calendar.getInstance()
+    val year = calendar.get(java.util.Calendar.YEAR)
+    val month = calendar.get(java.util.Calendar.MONTH) + 1
+    val day = calendar.get(java.util.Calendar.DAY_OF_MONTH)
+    var date by remember { mutableStateOf(String.format("%d-%02d-%02d", year, month, day)) }
 
     Scaffold(
         topBar = {
@@ -80,15 +85,23 @@ fun AddTransactionScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = date,
+                onValueChange = { date = it },
+                label = { Text("Date (YYYY-MM-DD)") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
                     val newTransaction = Transaction(
                         description = description,
-                        amount = amount.toDoubleOrNull() ?: 0.0
+                        amount = amount.toDoubleOrNull() ?: 0.0,
+                        date = date
                     )
                     onSaveTransaction(newTransaction)
                 },
-                enabled = description.isNotBlank() && amount.toDoubleOrNull() != null && amount.toDouble() != 0.0,
+                enabled = description.isNotBlank() && amount.toDoubleOrNull() != null && amount.toDouble() != 0.0 && date.isNotBlank(),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Save Transaction")

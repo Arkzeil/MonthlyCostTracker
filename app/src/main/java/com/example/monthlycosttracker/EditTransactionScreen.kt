@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,8 +39,17 @@ fun EditTransactionScreen(
 ) {
     val transaction by viewModel.getTransactionById(transactionId).collectAsState(initial = null)
 
-    var description by remember { mutableStateOf(transaction?.description ?: "") }
-    var amount by remember { mutableStateOf(transaction?.amount?.toString() ?: "") }
+    var description by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf("") }
+    var date by remember { mutableStateOf("") }
+
+    LaunchedEffect(transaction) {
+        transaction?.let {
+            description = it.description
+            amount = it.amount.toString()
+            date = it.date
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -83,18 +93,26 @@ fun EditTransactionScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = date,
+                onValueChange = { date = it },
+                label = { Text("Date (YYYY-MM-DD)") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
                     val updatedTransaction = transaction?.copy(
                         description = description,
-                        amount = amount.toDoubleOrNull() ?: 0.0
+                        amount = amount.toDoubleOrNull() ?: 0.0,
+                        date = date
                     )
                     if (updatedTransaction != null) {
                         viewModel.update(updatedTransaction)
                     }
                     onBackClick()
                 },
-                enabled = description.isNotBlank() && amount.toDoubleOrNull() != null && amount.toDouble() != 0.0,
+                enabled = description.isNotBlank() && amount.toDoubleOrNull() != null && amount.toDouble() != 0.0 && date.isNotBlank(),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Save Changes")
