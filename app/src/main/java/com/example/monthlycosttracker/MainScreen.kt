@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import java.util.Calendar
 import androidx.compose.material.icons.filled.Add
@@ -112,6 +114,13 @@ fun MainScreen(
                     )
                 }
             }
+
+            HorizontalPagerIndicator(
+                pagerState = pagerState,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(16.dp),
+            )
         }
     }
 }
@@ -149,10 +158,16 @@ fun TransactionList(
 ) {
     if (transactions.isEmpty()) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "No transactions",
+                modifier = Modifier.size(64.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
             Text("No transactions yet. Add one to get started!")
         }
     } else {
