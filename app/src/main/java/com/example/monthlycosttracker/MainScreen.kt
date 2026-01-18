@@ -13,10 +13,6 @@ import androidx.compose.material.icons.Icons
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import java.util.Calendar
-import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.launch
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -53,18 +49,17 @@ fun MainScreen(
     onAddTransactionClick: () -> Unit,
     onEditTransactionClick: (Int) -> Unit
 ) {
+    val startYear = 2020
+    val endYear = 2030
+    val totalMonths = (endYear - startYear + 1) * 12
+
     val calendar = Calendar.getInstance()
     val currentYear = calendar.get(Calendar.YEAR)
     val currentMonth = calendar.get(Calendar.MONTH)
 
-    val months = (0..11).map { month ->
-        val monthCalendar = Calendar.getInstance()
-        monthCalendar.set(currentYear, month, 1)
-        monthCalendar.getDisplayName(Calendar.MONTH, Calendar.LONG, java.util.Locale.getDefault()) ?: ""
-    }
+    val initialPage = (currentYear - startYear) * 12 + currentMonth
 
-    val pagerState = rememberPagerState(initialPage = currentMonth)
-    val coroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState(initialPage = initialPage)
 
     Scaffold(
         topBar = {
@@ -83,8 +78,14 @@ fun MainScreen(
         }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
+            val currentSelectedYear = startYear + pagerState.currentPage / 12
+            val currentSelectedMonth = pagerState.currentPage % 12
+            val monthCalendar = Calendar.getInstance()
+            monthCalendar.set(currentSelectedYear, currentSelectedMonth, 1)
+            val monthName = monthCalendar.getDisplayName(Calendar.MONTH, Calendar.LONG, java.util.Locale.getDefault()) ?: ""
+
             Text(
-                text = "${months[pagerState.currentPage]} ${currentYear}",
+                text = "$monthName ${currentSelectedYear}",
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -92,27 +93,13 @@ fun MainScreen(
                 textAlign = TextAlign.Center
             )
 
-            TabRow(selectedTabIndex = pagerState.currentPage) {
-                months.forEachIndexed { index, title ->
-                    Tab(
-                        text = { Text(title) },
-                        selected = pagerState.currentPage == index,
-                        onClick = {
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(index)
-                            }
-                        }
-                    )
-                }
-            }
-
             HorizontalPager(
-                count = 12,
+                count = totalMonths,
                 state = pagerState,
                 modifier = Modifier.fillMaxSize()
             ) { page ->
-                val year = currentYear
-                val month = page + 1
+                val year = startYear + page / 12
+                val month = page % 12 + 1
                 val transactions by viewModel.getTransactionsByMonth(year, month).collectAsState(initial = emptyList())
                 val totalCost = transactions.sumOf { it.amount }
 
