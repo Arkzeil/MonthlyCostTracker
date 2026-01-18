@@ -4,11 +4,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
+import java.util.Calendar
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -37,16 +45,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, com.google.accompanist.pager.ExperimentalPagerApi::class)
 @Composable
 fun MainScreen(
     viewModel: TransactionViewModel,
     onAddTransactionClick: () -> Unit,
     onEditTransactionClick: (Int) -> Unit
 ) {
-    val transactions by viewModel.allTransactions.collectAsState(initial = emptyList())
+    val calendar = Calendar.getInstance()
+    val currentYear = calendar.get(Calendar.YEAR)
+    val currentMonth = calendar.get(Calendar.MONTH)
 
-    val totalCost = transactions.sumOf { it.amount }
+    val months = (0..11).map { month ->
+        val monthCalendar = Calendar.getInstance()
+        monthCalendar.set(currentYear, month, 1)
+        monthCalendar.getDisplayName(Calendar.MONTH, Calendar.LONG, java.util.Locale.getDefault()) ?: ""
+    }
+
+    val pagerState = rememberPagerState(initialPage = currentMonth)
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -65,12 +82,39 @@ fun MainScreen(
         }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            TotalCostHeader(totalCost = totalCost)
-            TransactionList(
-                transactions = transactions,
-                viewModel = viewModel,
-                onEditTransactionClick = onEditTransactionClick
-            )
+            TabRow(selectedTabIndex = pagerState.currentPage) {
+                months.forEachIndexed { index, title ->
+                    Tab(
+                        text = { Text(title) },
+                        selected = pagerState.currentPage == index,
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(index)
+                            }
+                        }
+                    )
+                }
+            }
+
+            HorizontalPager(
+                count = 12,
+                state = pagerState,
+                modifier = Modifier.fillMaxSize()
+            ) { page ->
+                val year = currentYear
+                val month = page + 1
+                val transactions by viewModel.getTransactionsByMonth(year, month).collectAsState(initial = emptyList())
+                val totalCost = transactions.sumOf { it.amount }
+
+                Column {
+                    TotalCostHeader(totalCost = totalCost)
+                    TransactionList(
+                        transactions = transactions,
+                        viewModel = viewModel,
+                        onEditTransactionClick = onEditTransactionClick
+                    )
+                }
+            }
         }
     }
 }

@@ -25,6 +25,11 @@ class TransactionViewModel(private val transactionDao: TransactionDao) : ViewMod
     fun getTransactionById(id: Int): Flow<Transaction> {
         return transactionDao.getTransactionById(id)
     }
+
+    fun getTransactionsByMonth(year: Int, month: Int): Flow<List<Transaction>> {
+        val monthString = String.format("%d-%02d", year, month)
+        return transactionDao.getTransactionsByMonth(monthString)
+    }
 }
 
 class TransactionViewModelFactory(private val transactionDao: TransactionDao) : ViewModelProvider.Factory {
