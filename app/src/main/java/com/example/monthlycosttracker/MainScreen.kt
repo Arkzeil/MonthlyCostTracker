@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -37,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -51,15 +53,28 @@ fun MainScreen(
     onAddTransactionClick: () -> Unit,
     onEditTransactionClick: (Int) -> Unit
 ) {
-    val startYear = 2020
-    val endYear = 2030
-    val totalMonths = (endYear - startYear + 1) * 12
+    val calendar = remember { Calendar.getInstance() }
+    var startYear by remember { mutableStateOf(calendar.get(Calendar.YEAR)) }
+    var endYear by remember { mutableStateOf(calendar.get(Calendar.YEAR)) }
+    var totalMonths by remember { mutableStateOf(12) }
+    var initialPage by remember { mutableStateOf(calendar.get(Calendar.MONTH)) }
+    var isLoading by remember { mutableStateOf(true) }
 
-    val calendar = Calendar.getInstance()
-    val currentYear = calendar.get(Calendar.YEAR)
-    val currentMonth = calendar.get(Calendar.MONTH)
-
-    val initialPage = (currentYear - startYear) * 12 + currentMonth
+    LaunchedEffect(viewModel) {
+        isLoading = true
+        val transactions = viewModel.getAllTransactionsList()
+        if (transactions.isNotEmpty()) {
+            val minYear = transactions.minOf { it.date.substring(0, 4).toInt() }
+            val maxYear = transactions.maxOf { it.date.substring(0, 4).toInt() }
+            startYear = minYear
+            endYear = maxYear
+            totalMonths = (endYear - startYear + 1) * 12
+            val currentYear = calendar.get(Calendar.YEAR)
+            val currentMonth = calendar.get(Calendar.MONTH)
+            initialPage = (currentYear - startYear) * 12 + currentMonth
+        }
+        isLoading = false
+    }
 
     val pagerState = rememberPagerState(initialPage = initialPage)
 
@@ -82,9 +97,8 @@ fun MainScreen(
         Column(modifier = Modifier.padding(innerPadding)) {
             val currentSelectedYear = startYear + pagerState.currentPage / 12
             val currentSelectedMonth = pagerState.currentPage % 12
-            val monthCalendar = Calendar.getInstance()
-            monthCalendar.set(currentSelectedYear, currentSelectedMonth, 1)
-            val monthName = monthCalendar.getDisplayName(Calendar.MONTH, Calendar.LONG, java.util.Locale.getDefault()) ?: ""
+            calendar.set(currentSelectedYear, currentSelectedMonth, 1)
+            val monthName = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, java.util.Locale.getDefault()) ?: ""
 
             Text(
                 text = "$monthName ${currentSelectedYear}",
@@ -105,13 +119,17 @@ fun MainScreen(
                 val transactions by viewModel.getTransactionsByMonth(year, month).collectAsState(initial = emptyList())
                 val totalCost = transactions.sumOf { it.amount }
 
-                Column {
-                    TotalCostHeader(totalCost = totalCost)
-                    TransactionList(
-                        transactions = transactions,
-                        viewModel = viewModel,
-                        onEditTransactionClick = onEditTransactionClick
-                    )
+                if (isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                } else {
+                    Column {
+                        TotalCostHeader(totalCost = totalCost)
+                        TransactionList(
+                            transactions = transactions,
+                            viewModel = viewModel,
+                            onEditTransactionClick = onEditTransactionClick
+                        )
+                    }
                 }
             }
 

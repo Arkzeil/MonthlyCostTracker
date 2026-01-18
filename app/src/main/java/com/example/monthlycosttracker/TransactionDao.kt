@@ -26,4 +26,7 @@ interface TransactionDao {
 
     @Query("SELECT * from transactions WHERE date LIKE :month || '%' ORDER BY date DESC")
     fun getTransactionsByMonth(month: String): Flow<List<Transaction>>
+
+    @Query("SELECT * FROM transactions")
+    suspend fun getAllTransactionsList(): List<Transaction>
 }

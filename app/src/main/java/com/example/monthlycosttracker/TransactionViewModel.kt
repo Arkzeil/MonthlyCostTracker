@@ -30,6 +30,10 @@ class TransactionViewModel(private val transactionDao: TransactionDao) : ViewMod
         val monthString = String.format("%d-%02d", year, month)
         return transactionDao.getTransactionsByMonth(monthString)
     }
+
+    suspend fun getAllTransactionsList(): List<Transaction> {
+        return transactionDao.getAllTransactionsList()
+    }
 }
 
 class TransactionViewModelFactory(private val transactionDao: TransactionDao) : ViewModelProvider.Factory {
