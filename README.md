@@ -1,9 +1,15 @@
 # Monthly Cost Tracker
 
+## This is a project for geting familar with Gemini CLI vibe coding
+So most of the codes are wriiten by genini cli, I just supervised and provide opinion 
+
 ## Project Description
 The Monthly Cost Tracker is an Android application designed to help users track their monthly expenses. Users can add new transactions, view a list of all recorded transactions, and see a running total of their monthly costs. The application utilizes persistent storage to ensure that all transaction data is saved and available even after the app is closed.
 
 ## Features
+*   **Monthly Transaction View with Multi-Year Support:** Seamlessly navigate through transactions across different months and years with a swipeable interface.
+*   **Clear Empty State Feedback:** Provides clear visual cues when no transactions are present for a given month.
+*   **Loading Indicator:** Informs the user when transaction data is being loaded.
 *   **Transaction Date Input:** Record the specific date for each transaction (Year/Month/Day).
 *   **Add Transactions:** Easily add new expenses with a description and amount.
 *   **View Transactions:** See a list of all recorded transactions.
@@ -17,6 +23,7 @@ The Monthly Cost Tracker is an Android application designed to help users track 
 *   **Room Persistence Library:** Provides an abstraction layer over SQLite to allow for more robust database access while harnessing the full power of SQLite.
 *   **ViewModel:** Manages UI-related data in a lifecycle-conscious way.
 *   **Android Navigation Compose:** For managing in-app navigation.
+*   **Accompanist Pager:** A Jetpack Compose library for swipeable views, used for monthly transaction navigation.
 *   **Gradle Kotlin DSL:** For build automation and dependency management.
 
 ## Setup and Installation
