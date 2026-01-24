@@ -41,6 +41,7 @@ fun AddTransactionScreen(
     val month = calendar.get(java.util.Calendar.MONTH) + 1
     val day = calendar.get(java.util.Calendar.DAY_OF_MONTH)
     var date by remember { mutableStateOf(String.format("%d-%02d-%02d", year, month, day)) }
+    var category by remember { mutableStateOf("Uncategorized") }
 
     Scaffold(
         topBar = {
@@ -92,12 +93,18 @@ fun AddTransactionScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
+            CategorySelection(
+                selectedCategory = category,
+                onCategorySelected = { category = it }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
                     val newTransaction = Transaction(
                         description = description,
                         amount = amount.toDoubleOrNull() ?: 0.0,
-                        date = date
+                        date = date,
+                        category = category
                     )
                     onSaveTransaction(newTransaction)
                 },

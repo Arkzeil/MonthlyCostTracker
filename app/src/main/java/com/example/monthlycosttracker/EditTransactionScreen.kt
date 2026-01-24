@@ -42,12 +42,14 @@ fun EditTransactionScreen(
     var description by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
+    var category by remember { mutableStateOf("Uncategorized") }
 
     LaunchedEffect(transaction) {
         transaction?.let {
             description = it.description
             amount = it.amount.toString()
             date = it.date
+            category = it.category
         }
     }
 
@@ -100,12 +102,18 @@ fun EditTransactionScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
+            CategorySelection(
+                selectedCategory = category,
+                onCategorySelected = { category = it }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
                     val updatedTransaction = transaction?.copy(
                         description = description,
                         amount = amount.toDoubleOrNull() ?: 0.0,
-                        date = date
+                        date = date,
+                        category = category
                     )
                     if (updatedTransaction != null) {
                         viewModel.update(updatedTransaction)

@@ -276,6 +276,7 @@ fun TransactionItem(
             Column {
                 Text(transaction.description, style = MaterialTheme.typography.bodyLarge)
                 Text(transaction.date, style = MaterialTheme.typography.bodySmall)
+                Text(transaction.category, style = MaterialTheme.typography.bodySmall)
             }
             Text("$${DecimalFormatter.formatter.format(transaction.amount)}", fontWeight = FontWeight.SemiBold)
             Row {
