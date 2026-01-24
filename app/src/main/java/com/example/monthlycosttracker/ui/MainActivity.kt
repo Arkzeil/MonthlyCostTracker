@@ -21,6 +21,7 @@ import com.example.monthlycosttracker.TransactionDao
 import com.example.monthlycosttracker.TransactionViewModel
 import com.example.monthlycosttracker.TransactionViewModelFactory
 import com.example.monthlycosttracker.ui.theme.MonthlyCostTrackerTheme
+import com.example.monthlycosttracker.ChartScreen
 
 class MainActivity : ComponentActivity() {
     private lateinit var transactionDao: TransactionDao
@@ -63,7 +64,8 @@ fun AppNavigation(viewModel: TransactionViewModel) {
                 onAddTransactionClick = { navController.navigate("add_transaction_screen") },
                 onEditTransactionClick = { transactionId ->
                     navController.navigate("edit_transaction_screen/$transactionId")
-                }
+                },
+                onChartClick = { navController.navigate("chart_screen") }
             )
         }
         composable("add_transaction_screen") {
@@ -84,6 +86,9 @@ fun AppNavigation(viewModel: TransactionViewModel) {
                     onBackClick = { navController.popBackStack() }
                 )
             }
+        }
+        composable("chart_screen") {
+            ChartScreen(viewModel = viewModel)
         }
     }
 }

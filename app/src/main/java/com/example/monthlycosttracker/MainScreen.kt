@@ -16,6 +16,7 @@ import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import java.util.Calendar
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddChart
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
@@ -53,7 +54,8 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     viewModel: TransactionViewModel,
     onAddTransactionClick: () -> Unit,
-    onEditTransactionClick: (Int) -> Unit
+    onEditTransactionClick: (Int) -> Unit,
+    onChartClick: () -> Unit
 ) {
     val calendar = remember { Calendar.getInstance() }
     var startYear by remember { mutableStateOf(calendar.get(Calendar.YEAR)) }
@@ -107,6 +109,9 @@ fun MainScreen(
                 actions = {
                     IconButton(onClick = { showDialog = true }) {
                         Icon(Icons.Default.Edit, contentDescription = "Select Month and Year")
+                    }
+                    IconButton(onClick = onChartClick) {
+                        Icon(Icons.Default.AddChart, contentDescription = "Charts")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
