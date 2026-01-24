@@ -37,6 +37,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -45,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, com.google.accompanist.pager.ExperimentalPagerApi::class)
 @Composable
@@ -59,6 +61,9 @@ fun MainScreen(
     var totalMonths by remember { mutableStateOf(12) }
     var initialPage by remember { mutableStateOf(calendar.get(Calendar.MONTH)) }
     var isLoading by remember { mutableStateOf(true) }
+    var showDialog by remember { mutableStateOf(false) }
+
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(viewModel) {
         isLoading = true
@@ -78,10 +83,32 @@ fun MainScreen(
 
     val pagerState = rememberPagerState(initialPage = initialPage)
 
+    if (showDialog) {
+        MonthYearPickerDialog(
+            onDismissRequest = { showDialog = false },
+            onConfirm = { year, month ->
+                val page = (year - startYear) * 12 + month
+                coroutineScope.launch {
+                    pagerState.scrollToPage(page)
+                }
+                showDialog = false
+            },
+            startYear = startYear,
+            endYear = endYear,
+            initialYear = startYear + pagerState.currentPage / 12,
+            initialMonth = pagerState.currentPage % 12
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Monthly Cost Tracker") },
+                actions = {
+                    IconButton(onClick = { showDialog = true }) {
+                        Icon(Icons.Default.Edit, contentDescription = "Select Month and Year")
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
